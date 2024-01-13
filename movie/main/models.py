@@ -19,8 +19,8 @@ class MovieInfo(models.Model):
     m_trailer = models.URLField()
     m_o_language = models.CharField(max_length=30)
     m_status = models.CharField(max_length=20)
-    m_budget = models.DecimalField(max_digits=15, decimal_place=2, default=0)
-    m_revenue = models.DecimalField(max_digits=15, decimal_place=2, default=0)
+    m_budget = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    m_revenue = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     m_adult = models.CharField(max_length=10, default=False)
     m_popularity = models.FloatField(default=0.0),
     m_vote_average = models.FloatField(default=0.0),
