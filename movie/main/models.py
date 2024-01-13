@@ -4,6 +4,7 @@ from django.db import models
 
 
 class MovieInfo(models.Model):
+    m_id = models.BigIntegerField(default=1)
     m_name = models.CharField(max_length=100)
     m_motto = models.CharField(max_length=200)
     m_description = models.TextField()
@@ -18,5 +19,5 @@ class MovieInfo(models.Model):
     m_trailer = models.URLField()
     m_o_language = models.CharField(max_length=30)
     m_status = models.CharField(max_length=20)
-    m_budget = models.IntegerField(max_length=50)
-    m_revenue = models.IntegerField(max_length=50)
+    m_budget = models.IntegerField()
+    m_revenue = models.IntegerField()

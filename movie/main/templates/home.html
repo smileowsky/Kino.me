@@ -1,1 +1,7 @@
-<h1>HOME</h1>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="searchbar[]">
+    <input type="text" name="yearbar[]">
+    <input type="text" name="yearbar2[]">
+    <button type="submit" name="search"></button>
+</form>
