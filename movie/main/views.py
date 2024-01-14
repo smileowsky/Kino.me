@@ -7,44 +7,56 @@ from . models import MovieInfo
 # Create your views here.
 
 
-def fetch_and_save_movies(): 
+def fetch_and_save_movies(request): 
     data_from_TMDB = []
+    my_API = '43aeb22a3e8c29bf8f8c592df29550ba'
     
-    data = requests.get("https://api.themoviedb.org/3/dicover/movie?api_key=43aeb22a3e8c29bf8f8c592df29550ba")
+    data = requests.get(f"https://api.themoviedb.org/3/discover/movie?api_key={my_API}")
     data = json.loads(data.text)
     
     i = 0
 
     while i < len(data['results']):
 
-        genre_data = requests.get('https://api.themoviedb.org/3/movie/'+str(data['results'][i]['id'])+'?api_key=43aeb22a3e8c29bf8f8c592df29550ba')
+        genre_data = requests.get(f"https://api.themoviedb.org/3/movie/{data['results'][i]['id']}?api_key={my_API}")
         genre_data = json.loads(data.text)
 
+        video_data = requests.get(f"https://api.themoviedb.org/3/movie/{data['results'][i]['id']}/videos?api_key={my_API}")
+        video_data = json.loads(video_data.text)
+
+        movie_data = requests.get(f"https://api.themoviedb.org/3/{data['results'][i]['id']}/credits?api_key={my_API}")
+        movie_data = json.loads(movie_data.text)
+
+        movie_status = requests.get(f"https://api.themoviedb.org/3/movie/{data['results'][i]['id']}+?api_key={my_API}")
+        movie_status = json.loads(movie_status.txt)
+
         id = data['results'][i]['id']
+        imdb_id = movie_data['imdb_id']
         title = data['results'][i]['title']
-        motto = ''
+        motto = movie_status('tagline', '')
         overview = data['results'][i]['overview']
         genre = genre_data['genres'][i]['name']
-        director = ''
-        writer = ''
+        director = movie_data['crew'][2]['name']
+        writer = movie_data['crew'][12]['name']
         release_date = data['results'][i]['release_date']
         poster_path = data['results'][i]['poster_path']
         backdrop_path = data['result'][i]['backdrop_path']
-        trailer = ''
+        trailer = data['results'][23]['key']
         original_language = data['results'][i]['original_language']
-        status = ''
-        budget = ''
-        revenue = ''
+        status = movie_status('status', '')
+        budget = movie_status('budget', 0)
+        revenue = movie_status('revenue', 0)
         adult = data['results'][i]['adult']
         popularity = data['results'][i]['popularity']
         vote_average = data['results'][i]['vote_average']
         vote_count = data['results'][i]['vote_count']
 
-        check = MovieInfo.objects.filter(video_id = data['results'][i]['id']).count
+        check = MovieInfo.objects.filter(m_id=id).count()
 
         if check == 0:
-            save = MovieInfo(
+            movie_i = MovieInfo(
                 m_id = id,
+                m_imdb_i = imdb_id,
                 m_name = title,
                 m_motto = motto,
                 m_description = overview,
@@ -64,6 +76,10 @@ def fetch_and_save_movies():
                 m_vote_average = vote_average,
                 m_vote_count = vote_count
                 )
+            movie_i.save()
+        i += 1
+        
+    return render(request, 'home.html', {'my_API' : my_API, 'data_from_TMDB' : data_from_TMDB})
 
     
 
