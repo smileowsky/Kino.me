@@ -1,7 +1,26 @@
-<form method="post">
-    {% csrf_token %}
-    <input type="text" name="searchbar[]">
-    <input type="text" name="yearbar[]">
-    <input type="text" name="yearbar2[]">
-    <button type="submit" name="search"></button>
-</form>
+<div>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="fetch" class="btn btn-success btn-lg">Fetch</button>
+    </form>
+{{id}}<br>
+{{imdb_id}}<br>
+{{backdrop_path}}<br>
+{{title}}<br>
+{{motto}}<br>
+{{overview}}<br>
+{{genre}}<br>
+{{director}}<br>
+{{writer}}<br>
+{{release_date}}<br>
+{{poster_path}}<br>
+{{trailer}}<br>
+{{original_language}}<br>
+{{status}}<br>
+{{budget}}<br>
+{{revenue}}<br>
+{{adult}}<br>
+{{popularity}}<br>
+{{vote_average}}<br>
+{{vote_count}}
+</div>
