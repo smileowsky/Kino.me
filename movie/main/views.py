@@ -11,25 +11,6 @@ from . models import MovieInfo
 def fetch_and_save_movies(request):
 	data_from_TMDB = []
 	my_API = '43aeb22a3e8c29bf8f8c592df29550ba'
-	id = ''
-	imdb_id = ''
-	backdrop_path = ''
-	title = ''
-	overview = ''
-	genre = ''
-	director = ''
-	writer = ''
-	release_date = ''
-	poster_path = ''
-	trailer = ''
-	original_language = ''
-	status = ''
-	budget = ''
-	revenue = ''
-	adult = ''
-	popularity = ''
-	vote_average = ''
-	vote_count = ''
 	data = requests.get(
 		f"https://api.themoviedb.org/3/discover/movie?api_key={my_API}")
 	data = json.loads(data.text)
@@ -51,7 +32,7 @@ def fetch_and_save_movies(request):
 		movie_status = json.loads(movie_status.text)
 
 		movie_trailer = requests.get(
-			f"https://api.themoviedb.org/3/{data['results'][i]['id']}?videos?api_key={my_API}")
+			f"https://api.themoviedb.org/3/movie/{data['results'][i]['id']}/videos?api_key={my_API}")
 		movie_trailer = json.loads(movie_trailer.text)
 
 		id = data['results'][i]['id']
@@ -68,7 +49,7 @@ def fetch_and_save_movies(request):
 		release_date = data['results'][i]['release_date']
 		poster_path = data['results'][i]['poster_path']
 		backdrop_path = data['results'][i]['backdrop_path']
-
+		trailer = movie_trailer['results'][0]['key']
 		original_language = data['results'][i]['original_language']
 		status = movie_status['status']
 		budget = movie_status['budget']
@@ -78,83 +59,34 @@ def fetch_and_save_movies(request):
 		vote_average = data['results'][i]['vote_average']
 		vote_count = data['results'][i]['vote_count']
 
+		check = MovieInfo.objects.filter(m_id=id).count()
+
+		if check == 0:
+			movie_i = MovieInfo(
+				m_id = id,
+				m_imdb_i = imdb_id,
+				m_name = title,
+				m_motto = motto,
+				m_description = overview,
+				m_genre = genre,
+				m_director = director,
+				m_writer = writer,
+				m_r_date = release_date,
+				m_poster = poster_path,
+				m_backg_im = backdrop_path,
+				m_trailer = trailer,
+				m_o_language = original_language,
+				m_status = status,
+				m_budget = budget,
+				m_revenue = revenue,
+				m_adult = adult,
+				m_popularity = popularity,
+				m_vote_average = vote_average,
+				m_vote_count = vote_count
+				)
+			movie_i.save()
 		i += 1
-		break
 
-	return render(request, 'home.html', {
-											'id': id,
-											'imdb_id': imdb_id,
-											'title': title,
-											'motto': motto,
-											'overview': overview,
-											'genre': genre,
-											'director': director,
-											'writer': writer,
-											'release_date': release_date,
-											'poster_path': poster_path,
-											'backdrop_path': backdrop_path,
-											'trailer': trailer,
-											'original_language': original_language,
-											'status': status,
-											'budget': budget,
-											'revenue': revenue,
-											'adult': adult,
-											'popularity': popularity,
-											'vote_average': vote_average,
-											'vote_count': vote_count
-										})
+	data = MovieInfo.objects.all().order_by('-id')
 
-
-'''
-			
-			
-			trailer = movie_trailer['results'][i]['key']
-
-		data = MovieInfo.objects.all().order_by('-id')
-	
-	return render(request, 'home.html', {'ids' : ids, 'my_API' : my_API, 'data_from_TMDB' : data_from_TMDB})
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-check = MovieInfo.objects.filter(m_id=id).count()
-
-			if check == 0:
-				movie_i = MovieInfo(
-					m_id = id,
-					m_imdb_i = imdb_id,
-					m_name = title,
-					m_motto = motto,
-					m_description = overview,
-					m_genre = genre,
-					m_director = director,
-					m_writer = writer,
-					m_r_date = release_date,
-					m_poster = poster_path,
-					m_backg_im = backdrop_path,
-					m_trailer = trailer,
-					m_o_language = original_language,
-					m_status = status,
-					m_budget = budget,
-					m_revenue = revenue,
-					m_adult = adult,
-					m_popularity = popularity,
-					m_vote_average = vote_average,
-					m_vote_count = vote_count
-					)
-				movie_i.save()
-			i += 1
-'''
+	return render(request, 'home.html', {'data_from_TMDB' : data_from_TMDB, 'data' : data})
