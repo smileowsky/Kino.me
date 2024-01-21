@@ -125,10 +125,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-M_BACGROUND_IMAGE_URL = '/m_background_image/'
+M_BACGROUND_IMAGE_URL = '/media/m_background_image/'
 M_BACGROUND_IMAGE_ROOT = os.path.join(BASE_DIR, 'media', 'm_background_image')
 
-M_POSTER_URL = '/m_poster/'
+M_POSTER_URL = '/media/m_poster/'
 M_POSTER_ROOT = os.path.join(BASE_DIR, 'media', 'm_poster')
