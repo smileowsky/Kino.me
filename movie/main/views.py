@@ -40,7 +40,8 @@ def fetch_and_save_movies(request):
 		title = data['results'][i]['title']
 		motto = movie_status['tagline']
 		overview = data['results'][i]['overview']
-		genre = genre_data['genres'][i]['name']
+		for genre_info in genre_data.get('genres', []):
+			genre = genre_info.get('name')
 		for crew_member in movie_data.get('crew', []):
 			if crew_member.get('job') == 'Director':
 				director = crew_member.get('name', '')
@@ -49,14 +50,20 @@ def fetch_and_save_movies(request):
 		release_date = data['results'][i]['release_date']
 		poster_path = data['results'][i]['poster_path']
 		backdrop_path = data['results'][i]['backdrop_path']
-		trailer = movie_trailer['results'][0]['key']
+		for trailer_info in movie_trailer.get('results', []):
+			if 'trailer' in trailer_info.get('name', '').lower():
+				trailer = trailer_info['key']
 		original_language = data['results'][i]['original_language']
 		status = movie_status['status']
 		budget = movie_status['budget']
 		revenue = movie_status['revenue']
 		adult = data['results'][i]['adult']
-		popularity = data['results'][i]['popularity']
-		vote_average = data['results'][i]['vote_average']
+		try:
+			popularity = data['results'][i]['popularity']
+			vote_average = data['results'][i]['vote_average']
+		except TypeError:
+			popularity = 0
+			vote_average = 0
 		vote_count = data['results'][i]['vote_count']
 
 		check = MovieInfo.objects.filter(m_id=id).count()

@@ -23,6 +23,6 @@ class MovieInfo(models.Model):
     m_budget = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     m_revenue = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     m_adult = models.CharField(max_length=10, default=False)
-    m_popularity = models.IntegerField(),
-    m_vote_average = models.IntegerField(),
+    m_popularity = models.IntegerField()
+    m_vote_average = models.IntegerField()
     m_vote_count = models.IntegerField()
