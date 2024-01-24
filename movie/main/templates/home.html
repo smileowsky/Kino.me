@@ -46,9 +46,9 @@
             <td>{{info.m_director}}</td>
             <td>{{info.m_writer}}</td>
             <td>{{info.m_r_date | date:'Y-m-d'}}</td>
-            <td><img style="width: 50px; height: 60px;" src="{{info.m_poster}}"></td>
-            <td><img style="width: 50px; height: 60px;" src="{{info.m_backg_im}}"></td>
-            <td><iframe width="200" height="150" src="{{info.m_trailer|safe}}"
+            <td><img style="width: 50px; height: 60px;" src="https://image.tmdb.org/t/p/w1280{{info.m_poster}}"></td>
+            <td><img style="width: 50px; height: 60px;" src="https://image.tmdb.org/t/p/w1280{{info.m_backg_im}}"></td>
+            <td><iframe width="200" height="150" src="https://www.youtube.com/embed/{{info.m_trailer}}"
                     title="{{info.m_name}}" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen></iframe></td>
