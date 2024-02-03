@@ -7,6 +7,9 @@ from . models import MovieInfo
 
 # Create your views here.
 
+def home(request):
+    return render(request, 'home.html')
+
 
 def fetch_and_save_movies(request):
 
@@ -48,7 +51,8 @@ def fetch_and_save_movies(request):
                 title = data['results'][i]['title']
                 motto = movie_status['tagline']
                 overview = data['results'][i]['overview']
-                genres = [genre_info['name'] for genre_info in genre_data.get('genres', [])]
+                genres = [genre_info['name']
+                          for genre_info in genre_data.get('genres', [])]
                 for crew_member in movie_data.get('crew', []):
                     if crew_member.get('job') == 'Director':
                         director = crew_member.get('name', '')
@@ -89,7 +93,7 @@ def fetch_and_save_movies(request):
                         m_name=title,
                         m_motto=motto,
                         m_description=overview,
-                        m_genre = ', '.join(genres),
+                        m_genre=', '.join(genres),
                         m_director=director,
                         m_writer=writer,
                         m_r_date=release_date,
@@ -109,5 +113,6 @@ def fetch_and_save_movies(request):
                 i += 1
 
     data = MovieInfo.objects.all().order_by('-id')
+    data1 = MovieInfo.objects.all().order_by('-id')[:8]
 
-    return render(request, 'home.html', {'data_from_TMDB': data_from_TMDB, 'data': data})
+    return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data, 'data1' : data1})
