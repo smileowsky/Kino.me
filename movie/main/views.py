@@ -8,7 +8,9 @@ from . models import MovieInfo
 # Create your views here.
 
 def home(request):
-    return render(request, 'home.html')
+    data1 = MovieInfo.objects.all().order_by('-id')
+
+    return render(request, 'home.html', {'data1' : data1})
 
 
 def fetch_and_save_movies(request):
@@ -113,6 +115,5 @@ def fetch_and_save_movies(request):
                 i += 1
 
     data = MovieInfo.objects.all().order_by('-id')
-    data1 = MovieInfo.objects.all().order_by('-id')[:8]
 
     return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data, 'data1' : data1})

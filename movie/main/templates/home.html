@@ -3,9 +3,10 @@
 {%load static %}
 
 {% block content %}
+
 <!-- home -->
 <div class="home">
-  <div class="home__carousel owl-carousel" id="flixtv-hero">
+  <div class="home__carousel owl-carousel" id="flixtv-hero">\
     {% for info in data1 %}
     <div class="home__card">
       <a href="details.html">
@@ -30,6 +31,9 @@
     </div>
     {% endfor %}
   </div>
+
+  <button class="home__nav home__nav--prev" data-nav="#flixtv-hero" type="button"></button>
+  <button class="home__nav home__nav--next" data-nav="#flixtv-hero" type="button"></button>
 </div>
 <!-- end home -->
 
