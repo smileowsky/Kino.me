@@ -2,15 +2,19 @@ import requests
 import json
 from datetime import datetime
 from django.shortcuts import render
+from django.db.models.functions import ExtractYear
 from . models import MovieInfo
 
 
 # Create your views here.
 
 def home(request):
-    data1 = MovieInfo.objects.all().order_by('-id')
+    data1 = MovieInfo.objects.all().order_by('m_popularity')[:20]
+    data2 = MovieInfo.objects.values_list('m_genre', flat=True).distinct()
+    data3 = MovieInfo.objects.annotate(year=ExtractYear('m_r_date')).values_list('year', flat=True).distinct().order_by('-m_r_date')
+    data4 = MovieInfo.objects.all().order_by('m_r_date')[:21]
 
-    return render(request, 'home.html', {'data1' : data1})
+    return render(request, 'home.html', {'data1' : data1, 'data2' : data2, 'data3' : data3, 'data4' : data4})
 
 
 def fetch_and_save_movies(request):
