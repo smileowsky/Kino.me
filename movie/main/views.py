@@ -120,4 +120,4 @@ def fetch_and_save_movies(request):
 
     data = MovieInfo.objects.all().order_by('-id')
 
-    return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data, 'data1' : data1})
+    return render(request, 'movie.html', {'data_from_TMDB' : data_from_TMDB, 'data': data})

@@ -5,7 +5,7 @@ from django.db import models
 
 class MovieInfo(models.Model):
     m_id = models.BigIntegerField()
-    m_imdb_i = models.CharField(max_length=20)
+    m_imdb_i = models.CharField(max_length=20, blank=True, null=True)
     m_name = models.CharField(max_length=100)
     m_motto = models.CharField(max_length=200)
     m_description = models.TextField()
