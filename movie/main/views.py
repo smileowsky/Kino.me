@@ -1,9 +1,7 @@
 import requests
 import json
-from datetime import datetime
 from django.shortcuts import render
 from django.db.models.functions import ExtractYear
-from django.utils.timezone import make_aware
 from . models import MovieInfo, GenreInfo, CastInfo
 
 
@@ -11,12 +9,12 @@ from . models import MovieInfo, GenreInfo, CastInfo
 
 def home(request):
     data1 = MovieInfo.objects.all().order_by('m_popularity')[:20]
-    data2 = MovieInfo.objects.values_list('m_genre', flat=True).distinct()
+    """data2 = MovieInfo.objects.values_list('m_genre', flat=True).distinct()"""
     data3 = MovieInfo.objects.annotate(year=ExtractYear('m_r_date')).values_list(
         'year', flat=True).distinct().order_by('-m_r_date')
     data4 = MovieInfo.objects.all().order_by('m_r_date')[:21]
 
-    return render(request, 'home.html', {'data1': data1, 'data2': data2, 'data3': data3, 'data4': data4})
+    return render(request, 'home.html', {'data1': data1, 'data3': data3, 'data4': data4})
 
 
 def fetch_and_save_movies(request):
@@ -105,11 +103,14 @@ def fetch_and_save_movies(request):
                         genre, _ = GenreInfo.objects.get_or_create(
                             m_genre=genre_name)
                         genres_objects.append(genre)
-                    cast_info = CastInfo.objects.create(
-                        m_director=director,
-                        m_writer=writer,
-                        m_actors=", ".join(actors)
-                    )
+                    
+                    actors_objects = []
+                    for actor_name in actors:
+                        actor, _ = CastInfo.objects.get_or_create(m_actors=actor_name)
+                        actors_objects.append(actor)
+                        
+                    
+
                     movie_i = MovieInfo.objects.create(
                         m_id=id,
                         m_imdb_i=imdb_id,
@@ -127,14 +128,23 @@ def fetch_and_save_movies(request):
                         m_adult=adult,
                         m_popularity=popularity,
                         m_vote_average=vote_average,
-                        m_vote_count=vote_count
+                        m_vote_count=vote_count,
+                          
                     )
                     movie_i.m_genres.set(genres_objects)
 
+                    cast_info, _ = CastInfo.objects.get_or_create(
+                        m_director=director,
+                        m_writer=writer,
+                    )
                     movie_i.m_cast.add(cast_info)
+                    
                 i += 1
+        
     if 'delete_all' in request.POST:
-        data = MovieInfo.objects.all().delete()
+        MovieInfo.objects.all().delete()
+        CastInfo.objects.all().delete()
+        GenreInfo.objects.all().delete()
 
     data = MovieInfo.objects.all().order_by('-id')
 

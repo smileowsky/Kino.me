@@ -8,7 +8,7 @@ class MovieInfo(models.Model):
     m_imdb_i = models.CharField(max_length=20, blank=True, null=True)
     m_name = models.CharField(max_length=100)
     m_motto = models.CharField(max_length=200)
-    m_r_date = models.DateTimeField()
+    m_r_date = models.DateField()
     m_description = models.TextField()
     m_genres = models.ManyToManyField('GenreInfo', related_name='movies')
     m_cast = models.ManyToManyField('CastInfo', related_name='movies')
