@@ -8,11 +8,10 @@ class MovieInfo(models.Model):
     m_imdb_i = models.CharField(max_length=20, blank=True, null=True)
     m_name = models.CharField(max_length=100)
     m_motto = models.CharField(max_length=200)
-    m_description = models.TextField()
-    m_genre = models.CharField(max_length=255)
-    m_director = models.CharField(max_length=25)
-    m_writer = models.CharField(max_length=25)
     m_r_date = models.DateTimeField()
+    m_description = models.TextField()
+    m_genres = models.ManyToManyField('GenreInfo', related_name='movies')
+    m_cast = models.ManyToManyField('CastInfo', related_name='movies')
     m_poster = models.CharField(max_length=255)
     m_backg_im = models.CharField(max_length=255)
     m_trailer = models.CharField(max_length=50, blank=True, null=True)
@@ -24,3 +23,11 @@ class MovieInfo(models.Model):
     m_popularity = models.IntegerField()
     m_vote_average = models.IntegerField()
     m_vote_count = models.IntegerField()
+
+class GenreInfo(models.Model):
+    m_genre = models.CharField(max_length=255)
+
+class CastInfo(models.Model):
+    m_director = models.CharField(max_length=25)
+    m_writer = models.CharField(max_length=25)
+    m_actors = models.CharField(max_length=30)

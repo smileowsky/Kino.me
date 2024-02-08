@@ -3,7 +3,8 @@ import json
 from datetime import datetime
 from django.shortcuts import render
 from django.db.models.functions import ExtractYear
-from . models import MovieInfo
+from django.utils.timezone import make_aware
+from . models import MovieInfo, GenreInfo, CastInfo
 
 
 # Create your views here.
@@ -11,10 +12,11 @@ from . models import MovieInfo
 def home(request):
     data1 = MovieInfo.objects.all().order_by('m_popularity')[:20]
     data2 = MovieInfo.objects.values_list('m_genre', flat=True).distinct()
-    data3 = MovieInfo.objects.annotate(year=ExtractYear('m_r_date')).values_list('year', flat=True).distinct().order_by('-m_r_date')
+    data3 = MovieInfo.objects.annotate(year=ExtractYear('m_r_date')).values_list(
+        'year', flat=True).distinct().order_by('-m_r_date')
     data4 = MovieInfo.objects.all().order_by('m_r_date')[:21]
 
-    return render(request, 'home.html', {'data1' : data1, 'data2' : data2, 'data3' : data3, 'data4' : data4})
+    return render(request, 'home.html', {'data1': data1, 'data2': data2, 'data3': data3, 'data4': data4})
 
 
 def fetch_and_save_movies(request):
@@ -64,6 +66,11 @@ def fetch_and_save_movies(request):
                         director = crew_member.get('name', '')
                     elif crew_member.get('job') == 'Writer':
                         writer = crew_member.get('name', '')
+                actors = []
+                for cast_info in movie_data.get('cast', []):
+                    actors.append(cast_info['name'])
+                    if len(actors) == 5:
+                        break
                 release_date = data['results'][i]['release_date']
                 poster_path = data['results'][i]['poster_path']
                 backdrop_path = data['results'][i]['backdrop_path']
@@ -93,15 +100,22 @@ def fetch_and_save_movies(request):
                 check = MovieInfo.objects.filter(m_id=id).count()
 
                 if check == 0:
-                    movie_i = MovieInfo(
+                    genres_objects = []
+                    for genre_name in genres:
+                        genre, _ = GenreInfo.objects.get_or_create(
+                            m_genre=genre_name)
+                        genres_objects.append(genre)
+                    cast_info = CastInfo.objects.create(
+                        m_director=director,
+                        m_writer=writer,
+                        m_actors=", ".join(actors)
+                    )
+                    movie_i = MovieInfo.objects.create(
                         m_id=id,
                         m_imdb_i=imdb_id,
                         m_name=title,
                         m_motto=motto,
                         m_description=overview,
-                        m_genre=', '.join(genres),
-                        m_director=director,
-                        m_writer=writer,
                         m_r_date=release_date,
                         m_poster=poster_path,
                         m_backg_im=backdrop_path,
@@ -115,9 +129,13 @@ def fetch_and_save_movies(request):
                         m_vote_average=vote_average,
                         m_vote_count=vote_count
                     )
-                    movie_i.save()
+                    movie_i.m_genres.set(genres_objects)
+
+                    movie_i.m_cast.add(cast_info)
                 i += 1
+    if 'delete_all' in request.POST:
+        data = MovieInfo.objects.all().delete()
 
     data = MovieInfo.objects.all().order_by('-id')
 
-    return render(request, 'movie.html', {'data_from_TMDB' : data_from_TMDB, 'data': data})
+    return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data})
