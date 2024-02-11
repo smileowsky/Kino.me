@@ -64,9 +64,27 @@
                   <td>{{info.m_name}}</td>
                   <td>{{info.m_motto}}</td>
                   <td>{{info.m_description}}</td>
-                  <td>{{info.m_genre}}</td>
-                  <td>{{info.m_director}}</td>
-                  <td>{{info.m_writer}}</td>
+                  <td>
+                    {% for genre in info.m_genres.all %}
+                    {{genre.m_genre}}
+                    {% if not forloop.last %}
+                    {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for cast in info.m_cast.all %}
+                    {{cast.m_director}}
+                    {% if not forloop.last %}
+                    {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for cast in info.m_cast.all %}
+                    {{cast.m_writer}}
+                    {% if not forloop.last %}
+                    {% endif %}
+                    {% endfor %}
+                  </td>
                   <td>{{info.m_r_date | date:'Y-m-d'}}</td>
                   <td><img style="width: 50px; height: 60px;" src="https://image.tmdb.org/t/p/w1280{{info.m_poster}}">
                   </td>

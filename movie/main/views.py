@@ -8,13 +8,14 @@ from . models import MovieInfo, GenreInfo, CastInfo
 # Create your views here.
 
 def home(request):
-    data1 = MovieInfo.objects.all().order_by('m_popularity')[:20]
-    """data2 = MovieInfo.objects.values_list('m_genre', flat=True).distinct()"""
+    data1 = MovieInfo.objects.all().order_by('-m_popularity')[:20]
+    data2 = GenreInfo.objects.values_list('m_genre', flat=True).distinct()
     data3 = MovieInfo.objects.annotate(year=ExtractYear('m_r_date')).values_list(
         'year', flat=True).distinct().order_by('-m_r_date')
-    data4 = MovieInfo.objects.all().order_by('m_r_date')[:21]
-
-    return render(request, 'home.html', {'data1': data1, 'data3': data3, 'data4': data4})
+    data4 = MovieInfo.objects.all().order_by('-m_r_date')[:30]
+    data5 = MovieInfo.objects.all().order_by('-m_popularity')
+    data6 = MovieInfo.objects.all().order_by('-m_r_date')
+    return render(request, 'home.html', {'data1': data1, 'data2' : data2, 'data3' : data3, 'data4' : data4, 'data5' : data5, 'data6' : data6})
 
 
 def fetch_and_save_movies(request):
