@@ -8,7 +8,11 @@ from . models import MovieInfo, GenreInfo, CastInfo
 
 # Create your views here.
 def home(request):
-    return render(request, 'home.html')
+    new_release = MovieInfo.objects.all().order_by('-m_r_date')[:5]
+    movie_list = MovieInfo.objects.all().order_by('-m_popularity')[:30]
+    movie_vote = MovieInfo.objects.all().order_by('-m_vote_average')[:18]
+    trailers = MovieInfo.objects.all().order_by('-m_r_date')[:18]
+    return render(request, 'home.html', {'new_release' : new_release, 'movie_list' : movie_list, 'movie_vote' : movie_vote, 'trailers' : trailers})
 
 
 def fetch_and_save_movies(request):
@@ -81,6 +85,10 @@ def fetch_and_save_movies(request):
                     budget = 0
                     revenue = 0
                 adult = data['results'][i]['adult']
+                if adult == False:
+                    adult = 'False'
+                else:
+                    adult = 'True'
                 try:
                     popularity = data['results'][i]['popularity']
                     vote_average = data['results'][i]['vote_average']
@@ -88,6 +96,11 @@ def fetch_and_save_movies(request):
                     popularity = 0
                     vote_average = 0
                 vote_count = data['results'][i]['vote_count']
+                runtime = movie_status['runtime']
+                if movie_status['runtime'] != 0 and movie_status['runtime'] != '-':
+                    runtime = movie_status['runtime']
+                else:
+                    runtime = 0
 
                 check = MovieInfo.objects.filter(m_id=id).count()
 
@@ -122,6 +135,7 @@ def fetch_and_save_movies(request):
                         m_popularity=popularity,
                         m_vote_average=vote_average,
                         m_vote_count=vote_count,
+                        m_runtime=runtime,
 
                     )
                     movie_i.m_genres.set(genres_objects)

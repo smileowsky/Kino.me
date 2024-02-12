@@ -23,6 +23,7 @@ class MovieInfo(models.Model):
     m_popularity = models.IntegerField()
     m_vote_average = models.IntegerField()
     m_vote_count = models.IntegerField()
+    m_runtime = models.IntegerField()
 
 class GenreInfo(models.Model):
     m_genre = models.CharField(max_length=255)
