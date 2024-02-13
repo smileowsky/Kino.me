@@ -35,7 +35,7 @@ class CastInfo(models.Model):
 
 class TVSeriesInfo(models.Model):
     tv_id = models.BigIntegerField()
-    tv_imdb_i = models.CharField(max_length=20, blank=True, null=True)
+    tv_season_number = models.CharField(max_length=20, blank=True, null=True)
     tv_name = models.CharField(max_length=100)
     tv_motto = models.CharField(max_length=200)
     tv_r_date = models.DateField()

@@ -160,3 +160,47 @@ def fetch_and_save_movies(request):
         data = MovieInfo.objects.all().order_by('-id')
 
     return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data,})
+
+
+def fetch_and_save_series(request):
+
+    data_from_TMDB = []
+    page = 0
+
+    if 'fetch' in request.POST:
+        my_API = '43aeb22a3e8c29bf8f8c592df29550ba'
+
+        while page < 10:
+            page += 1
+
+            data = requests.get(
+                f"https://api.themoviedb.org/3/discover/tv?api_key={my_API}&page={page}")
+            data = json.loads(data.text)
+
+            i = 0
+
+            while i < len(data['results']):
+
+                genre_data = requests.get(
+                    f"https://api.themoviedb.org/3/tv/{data['results'][i]['id']}api_key={my_API}")
+                genre_data = json.loads(genre_data.text)
+
+                series_data = requests.get(
+                    f"https://api.themoviedb.org/3/tv/{data['results'][i]['id']}/credits?api_key={my_API}")
+                series_data = json.loads(series_data.text)
+
+                series_status = requests.get(
+                    f"https://api.themoviedb.org/3/tv/{data['results'][i]['id']}?api_key={my_API}")
+                series_status = json.loads(series_status.text)
+
+                series_trailer = requests.get(
+                    f"https://api.themoviedb.org/3/tv/{data['results'][i]['id']}/videos?api_key={my_API}")
+                series_trailer = json.loads(series_trailer.text)
+
+                id = data['results'[i]['id']]
+                num_season = series_status['last_episode_to_air'][i]['season_number']
+                title = data['results'][i]['original_name']
+                motto = series_status['tagline']
+                overview = data['overview']
+                genres = [genre_info['name']for genre_info in genre_data.get('genres', [])]
+                
