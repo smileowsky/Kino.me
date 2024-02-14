@@ -203,4 +203,14 @@ def fetch_and_save_series(request):
                 motto = series_status['tagline']
                 overview = data['overview']
                 genres = [genre_info['name']for genre_info in genre_data.get('genres', [])]
+                for crew_member in series_data.get('crew', []):
+                    if crew_member.get('job') == 'Writer':
+                        writer = crew_member.get('name', '')
+                    elif crew_member.get('job') == 'Director':
+                        director = crew_member.get('name', )
+                actors = []
+                for cast_member in series_data.get('cast', []):
+                    actors.append(cast_member['name'])
+                    if len(actors) == 5:
+                        break
                 
