@@ -39,6 +39,7 @@ class TVSeriesInfo(models.Model):
     tv_name = models.CharField(max_length=100)
     tv_motto = models.CharField(max_length=200)
     tv_r_date = models.DateField()
+    tv_e_date = models.DateField(blank=True, null=True)
     tv_description = models.TextField()
     tv_genres = models.ManyToManyField('TVGenreInfo', related_name='tvseries')
     tv_cast = models.ManyToManyField('TVCastInfo', related_name='tvseries')
@@ -47,18 +48,14 @@ class TVSeriesInfo(models.Model):
     tv_trailer = models.CharField(max_length=50, blank=True, null=True)
     tv_o_language = models.CharField(max_length=30)
     tv_status = models.CharField(max_length=20, default=True)
-    tv_budget = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    tv_revenue = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     tv_adult = models.CharField(max_length=10, default=False)
     tv_popularity = models.IntegerField()
     tv_vote_average = models.IntegerField()
     tv_vote_count = models.IntegerField()
-    tv_runtime = models.IntegerField()
 
 class TVGenreInfo(models.Model):
     tv_genre = models.CharField(max_length=255)
 
-class CastInfo(models.Model):
-    tv_director = models.CharField(max_length=25)
-    tv_writer = models.CharField(max_length=25)
+class TVCastInfo(models.Model):
+    tv_creator = models.CharField(max_length=25)
     tv_actors = models.CharField(max_length=30)

@@ -1,0 +1,103 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<nav class="navbar bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand">Navbar</a>
+    <form method="post"  class="d-flex" role="search">
+      {% csrf_token %}
+      <input class="form-control me-2" type="search" name="question" placeholder="Search" aria-label="Search" >
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    <center>
+      <button type="submit" name="fetch" class="btn btn-success btn-md ">Fetch</button>
+      <button type="submit" name="delete_all" class="btn btn-danger btn-md">Delete</button>
+    </center>
+  </form>
+</div>
+
+<div class="row">
+  <div class=" col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">TV Series Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+              <thead>
+                <th>#</th>
+                <th>ID</th>
+                <th>Season number</th>
+                <th>Title</th>
+                <th>Motto</th>
+                <th>Realese Date</th>
+                <th>End Date</th>
+                <th>Description</th>
+                <th>Genre</th>
+                <th>Creator</th>
+                <th>Poster</th>
+                <th>Bacground Image</th>
+                <th>Trailer</th>
+                <th>Language</th>
+                <th>Status</th>
+                <th>Adult</th>
+                <th>Popularity</th>
+                <th>Avarage Vote</th>
+                <th>Vote Count</th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{info.tv_id}}</td>
+                  <td>{{info.tv_season_number}}</td>
+                  <td>{{info.tv_name}}</td>
+                  <td>{{info.tv_motto}}</td>
+                  <td>{{info.tv_r_date | date:'Y-m-d'}}</td>
+                  <td>{{info.tv_e_date | date:'Y-m-d'}}</td>
+                  <td>{{info.tv_description}}</td>
+                  <td>
+                    {% for genre in info.tv_genres.all %}
+                    {{genre.tv_genre}}
+                    {% if not forloop.last %}
+                    {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for cast in info.tv_cast.all %}
+                    {{cast.tv_creator}}
+                    {% if not forloop.last %}
+                    {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td><img style="width: 50px; height: 60px;" src="https://image.tmdb.org/t/p/w1280{{info.tv_poster}}"></td>
+                  <td><img style="width: 50px; height: 60px;" src="https://image.tmdb.org/t/p/w1280{{info.tv_backg_im}}"></td>
+                  <td><iframe width="200" height="150" src="https://www.youtube.com/embed/{{info.tv_trailer}}"
+                      title="{{info.m_name}}" frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen></iframe></td>
+                  <td>{{info.tv_o_language}}</td>
+                  <td>{{info.tv_status}}</td>
+                  <td>{{info.tv_adult}}</td>
+                  <td>{{info.tv_popularity}}</td>
+                  <td>{{info.tv_vote_average}}</td>
+                  <td>{{info.tv_vote_count}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
