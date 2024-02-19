@@ -219,7 +219,7 @@ def fetch_and_save_series(request):
                 if 'last_air_date' in data:
                     last_air_date = series_data['last_air_date']
                 else:
-                    last_air_date = None
+                    last_air_date = ''
                 poster_path = data['results'][i]['poster_path']
                 bacdrop_path = data['results'][i]['backdrop_path']
                 trailer = []
