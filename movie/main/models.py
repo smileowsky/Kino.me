@@ -39,7 +39,7 @@ class TVSeriesInfo(models.Model):
     tv_name = models.CharField(max_length=100)
     tv_motto = models.CharField(max_length=200)
     tv_r_date = models.DateField()
-    tv_e_date = models.DateField(blank=True, null=True)
+    tv_e_date = models.DateField()
     tv_description = models.TextField()
     tv_genres = models.ManyToManyField('TVGenreInfo', related_name='tvseries')
     tv_cast = models.ManyToManyField('TVCastInfo', related_name='tvseries')

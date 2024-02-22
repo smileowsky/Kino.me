@@ -197,37 +197,28 @@ def fetch_and_save_series(request):
                 series_trailer = json.loads(series_trailer.text)
 
                 id = data['results'][i]['id']
-                try:
-                    num_season = series_status['last_episode_to_air'][i]['season_number']
-                except KeyError:
-                    num_season = 0
+                num_season = series_status['last_episode_to_air']['season_number']
                 title = data['results'][i]['original_name']
                 motto = series_status['tagline']
                 overview = data['results'][i]['overview']
                 genres = [genre_info['name']for genre_info in genre_data.get('genres', [])]
                 created_by = []
-                for crew_member in series_data.get('created_by', []):
+                for crew_member in series_status.get('created_by', []):
                     created_by.append(crew_member['name'])
-                    if len(created_by) == 2:
-                        break
                 actors = []
                 for cast_member in series_data.get('cast', []):
                     actors.append(cast_member['name'])
                     if len(actors) == 5:
                         break
                 first_air_date = data['results'][i]['first_air_date']
-                if 'last_air_date' in data:
-                    last_air_date = series_data['last_air_date']
-                else:
-                    last_air_date = None
+                last_air_date = series_status['last_air_date']
                 poster_path = data['results'][i]['poster_path']
                 bacdrop_path = data['results'][i]['backdrop_path']
                 trailer = []
                 for trailer_info in series_trailer.get('results', []):
                     if 'type' in trailer_info and trailer_info['type'] == 'Trailer':
                         trailer = trailer_info['key']
-                        if len(trailer) == 1:
-                            break
+                        break
                 original_language = series_status['original_language']
                 status = series_status['status']
                 adult = series_status['adult']
@@ -258,6 +249,12 @@ def fetch_and_save_series(request):
                             tv_actors=actor_name)
                         actors_objects.append(actor)
 
+                    creator_objects = []
+                    for creator_name in created_by:
+                        creator, _ = TVCastInfo.objects.get_or_create(
+                             tv_creator=creator_name)
+                        creator_objects.append(creator)
+                        
                     series_i = TVSeriesInfo.objects.create(
                         tv_id=id,
                         tv_season_number=num_season,
@@ -277,11 +274,6 @@ def fetch_and_save_series(request):
                         tv_vote_count=vote_count
                     )
                     series_i.tv_genres.set(genres_objects)
-
-                    cast_info, _ = TVCastInfo.objects.get_or_create(
-                        tv_creator=created_by
-                    )
-                    series_i.tv_cast.add(cast_info)
                 
                 i += 1
     

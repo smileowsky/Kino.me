@@ -73,8 +73,8 @@
                     {% endfor %}
                   </td>
                   <td>
-                    {% for cast in info.tv_cast.all %}
-                    {{cast.tv_creator}}
+                    {% for creator in info.tv_cast.all %}
+                    {{creator.tv_creator}}
                     {% if not forloop.last %}
                     {% endif %}
                     {% endfor %}
