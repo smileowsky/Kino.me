@@ -3,15 +3,17 @@ import json
 from django.shortcuts import render
 from django.db.models import Q
 from . models import MovieInfo, GenreInfo, CastInfo, TVSeriesInfo, TVGenreInfo, TVCastInfo
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
+
+
 def home(request):
     new_release = MovieInfo.objects.all().order_by('-m_r_date')[:5]
     movie_list = MovieInfo.objects.all().order_by('-m_popularity')[:30]
     movie_vote = MovieInfo.objects.all().order_by('-m_vote_average')[:18]
     trailers = MovieInfo.objects.all().order_by('-m_r_date')[:18]
-    return render(request, 'home.html', {'new_release' : new_release, 'movie_list' : movie_list, 'movie_vote' : movie_vote, 'trailers' : trailers})
+    return render(request, 'home.html', {'new_release': new_release, 'movie_list': movie_list, 'movie_vote': movie_vote, 'trailers': trailers})
 
 
 def fetch_and_save_movies(request):
@@ -158,7 +160,7 @@ def fetch_and_save_movies(request):
     else:
         data = MovieInfo.objects.all().order_by('-id')
 
-    return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data,})
+    return render(request, 'movie.html', {'data_from_TMDB': data_from_TMDB, 'data': data, })
 
 
 def fetch_and_save_series(request):
@@ -201,7 +203,8 @@ def fetch_and_save_series(request):
                 title = data['results'][i]['original_name']
                 motto = series_status['tagline']
                 overview = data['results'][i]['overview']
-                genres = [genre_info['name']for genre_info in genre_data.get('genres', [])]
+                genres = [genre_info['name']
+                          for genre_info in genre_data.get('genres', [])]
                 created_by = []
                 for crew_member in series_status.get('created_by', []):
                     created_by.append(crew_member['name'])
@@ -242,7 +245,7 @@ def fetch_and_save_series(request):
                         genre, _ = TVGenreInfo.objects.get_or_create(
                             tv_genre=genre_name)
                         genres_objects.append(genre)
-                    
+
                     actors_objects = []
                     for actor_name in actors:
                         actor, _ = TVCastInfo.objects.get_or_create(
@@ -252,9 +255,9 @@ def fetch_and_save_series(request):
                     creator_objects = []
                     for creator_name in created_by:
                         creator, _ = TVCastInfo.objects.get_or_create(
-                             tv_creator=creator_name)
+                            tv_creator=creator_name)
                         creator_objects.append(creator)
-                        
+
                     series_i = TVSeriesInfo.objects.create(
                         tv_id=id,
                         tv_season_number=num_season,
@@ -274,9 +277,9 @@ def fetch_and_save_series(request):
                         tv_vote_count=vote_count
                     )
                     series_i.tv_genres.set(genres_objects)
-                
+
                 i += 1
-    
+
     if 'delete_all' in request.POST:
         TVSeriesInfo.objects.all().delete()
         TVCastInfo.objects.all().delete()
@@ -288,5 +291,19 @@ def fetch_and_save_series(request):
         )
     else:
         data = TVSeriesInfo.objects.all().order_by('-id')
-    
-    return render(request, 'tv_series.html', {'data_from_TMDB' : data_from_TMDB, 'data' : data})
+
+    return render(request, 'tv_series.html', {'data_from_TMDB': data_from_TMDB, 'data': data})
+
+
+def index(request):
+    movies = MovieInfo.objects.all()
+    page = Paginator(movies, 10)
+    page_number = request.GET.get('page')
+    try:
+        page_obj = page.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = page.page(1)
+    except EmptyPage:
+        page_obj = page.page(page.num_pages)
+    context = {'page_obj': page_obj}
+    return render(request, 'movie.html', context)
