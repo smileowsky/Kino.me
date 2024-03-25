@@ -307,3 +307,11 @@ def index(request):
         page_obj = page.page(page.num_pages)
     context = {'page_obj': page_obj}
     return render(request, 'movie.html', context)
+
+
+def registration(request):
+    return render(request, 'signup.html')
+
+
+def login(request):
+    return render(request, 'signin.html')
